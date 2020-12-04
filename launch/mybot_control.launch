@@ -1,0 +1,19 @@
+<launch>
+
+  <!-- charger la configuration a partir du fichier YAML pour parametrer le serveur -->
+  <rosparam file="$(find mybot_control)/config/mybot_control.yaml" command="load"/>
+
+  <!-- chargement des controllers  -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" ns="/mybot"  
+      args="rightWheel_effort_controller leftWheel_effort_controller joint1_position_controller joint2_position_controller joint_state_controller "
+  />
+
+  <!-- Chargement d'un noeud qui fournira les transformations 3D to tf for rviz, etc -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" 
+	respawn="false" output="screen">
+    		<param name="robot_description" command="$(find xacro)/xacro.py '$(find mybot_description)/urdf/mybot.xacro'" />
+    		<remap from="/joint_states" to="/mybot/joint_states" />
+  </node>
+
+</launch>
